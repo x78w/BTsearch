@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://114.215.127.33/ -->
+<html lang="zh-CN">
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BTSearch</title>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
+<!--    <link rel="stylesheet" href="./BTSearch_files/jquery.autocomplete.css">-->
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://libs.cncdn.cn/jquery.devbridge-autocomplete/1.2.2/jquery.autocomplete.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+    <script>
+      $(function(){
+        $('#down').AutoComplete({
+          'itemHeight':20,
+          'listDirection':'down',
+          'width': jQuery("#down").width(),
+          'data':"/homedata/getBaiDuData",
+          'ajaxDataType':'json',
+          'onerror': function(msg){
+            alert(msg);
+          }
+        })
+        .AutoComplete('show');
+
+        $("#getDataButton").on("click", function(){
+          var down = jQuery("#down").val();
+            $.getJSON("/homedata/getBaiDuPanData"
+              ,{search:down,currentPage:1}
+              ,function(json){
+                var htmlValue = "";
+                for(var x in json){
+                  htmlValue += "<li><div><h3><a href='" + json[x].unescapedUrl + "'>" + json[x].title + "</a></h3>";
+                  htmlValue += "<p>" + json[x].unescapedUrl + "</p>";
+                  htmlValue += "<p>" + json[x].content + "</p></li>";
+                }
+                $("#myview2").html(htmlValue);
+              }
+            );
+          });
+          var currentPage = 1;
+          $(".button-wrap").on("click", function(){
+            if($(this).find("a").text().trim() == "上一页"){
+              if(currentPage == 1){
+                alert("已经是第一页了");
+                return false;
+              }
+              else{
+                currentPage --;
+              }
+            }
+            else{
+              currentPage ++;
+            }
+            var down = $("#down").val();
+              $.getJSON("/homedata/getBaiDuPanData"
+                ,{
+                  search:down
+                  ,currentPage:currentPage
+                }
+                ,function(json){
+                  var htmlValue = "";
+                  for(var x in json){
+                    htmlValue += "<li><div><h3><a href='" + json[x].unescapedUrl + "'>" + json[x].title + "</a></h3>";
+                    htmlValue += "<p>" + json[x].unescapedUrl + "</p>";
+                    htmlValue += "<p>" + json[x].content + "</p></li>";
+                  }
+                  $("#myview2").html(htmlValue);
+                }
+              );
+            });
+      }); 
+
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Static navbar -->
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://114.215.127.33/">BTSearch</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active">
+                <a id="homePage">
+                  主页
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+      </nav>
+      
+      <!-- Main component for a primary marketing message or call to action -->
+      <div id="myview" style="display:none"></div>
+      <div id="myview1">
+        <div class="jumbotron">
+          <h1 class="text-center">网盘搜索</h1>
+          <p></p>
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon" id="sizing-addon1">百度网盘</span>
+            <input type="text" class="form-control" autocomplete="off" name="down" id="down" placeholder="请输入你要检索的数据" aria-describedby="sizing-addon1">
+          </div>
+          <br>
+          <p class="text-center" id="codeView" style="color:red"></p>
+          <div class="btn-group btn-group-justified" role="group" aria-label="...">
+            <div class="btn-group" role="group">
+              <button type="button" id="getCodeButton" class="btn btn-block btn-success">搜索</button>
+            </div>
+          </div>
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <span class="button-wrap">
+        <a class="button button-pill button-raised button-primary btn btn-info">
+          上一页
+        </a>
+      </span>
+      <span class="button-wrap">
+        <a class="button button-pill button-raised button-primary btn btn-info">
+          下一页
+        </a>
+      </span>
+    </div>
+    <div class="ac" style="font-size: 18px; top: 270px; left: 555px; width: 881px; display: none;">
+      <ul></ul>
+    </div>
+    <div>
+      <p align="center" style="padding-top: 300px;">
+        免责声明：本站搜索结果来自Google自定义搜索，不存储任何网盘内容，只提供信息检索服务。
+        <br>
+        如果有侵犯的地方，联系我们及时整改。站长：雪花（QQ:2089646792）
+        <br>
+        Copyright©2015  百度网盘资源搜索引擎
+        <br>
+      </p>
+    </div>
+
+  </body>
+</html>
